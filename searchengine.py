@@ -3,7 +3,8 @@ from colorama import init
 from colorama import Fore as F
 from colorama import Back as B
 from colorama import Style
-
+import threading
+import time
 
 def color(text, fore='', back=''):
     return f'{fore}{back}{text}{Style.RESET_ALL}'
@@ -13,21 +14,21 @@ class drivesearch:
        available_drives = ['%s:' % d for d in string.ascii_uppercase if os.path.exists('%s:' % d)]
        return available_drives
 
-    def search_file_in_drives(self, filename, directorylist = None):
+    def search_file_in_drives(self, filename, i, directorylist = None):
         filelist = []
-        # if statement to check if the specific directory is passed else search in all the directories.
-        if directorylist is None or directorylist == '':
-            dirlist = self.list_available_drives()
-        else:
-            dirlist = directorylist.split(',')
-
         # search for the file in the directories
-        for dirname in dirlist:
+        for dirname in i:
             dirname = dirname.upper() if ':' in dirname else dirname.upper() + ':'
             for dirpath, dirs, files in os.walk(dirname):
                 for file in files:
                     if filename in file:
                         filelist.append(os.path.join(dirpath, file))
+
+        if not filelist:
+           print(color("There are no files present with the name '" + filename + "' in the directory " + dirname, F.RED))
+        else:
+           print(color("Please find below the list of search results for the file '" + file_name + "' in the directory " + dirname, F.RED))
+           print(color(filelist, F.GREEN))
 
         return filelist
 
@@ -56,13 +57,24 @@ if __name__ == "__main__":
       print(color("please select the directories to search from the above list mentioned eg:('C','C,H') : ", F.RED))
       directory_name = input()
 
-    # Search for the mentioned file in the directory.
-      filelst = drv_srch.search_file_in_drives(file_name, directory_name)
-      if not filelst:
-         print(color("There are no files present with the name '" + file_name + "' in the directory " + directory_name, F.RED))
+    # if statement to check if the specific directory is passed else search in all the directories.
+      if directory_name is None or directory_name == '':
+          dirlist = drv_srch.list_available_drives()
       else:
-         print(color("Please find below the list of search results for the file '" + file_name + "'", F.RED))
-         print(color(filelst, F.GREEN))
+          dirlist = directory_name.split(',')
+
+    # Creating threads to run in multithread
+      threads = []
+      for i in dirlist:
+          t = threading.Thread(target=drv_srch.search_file_in_drives, args=[file_name,i, directory_name])
+          t.start()
+          threads.append(t)
+      print(f'Active Threads: {threading.active_count()}')
+      print(threads)
+
+      for thread in threads:
+          thread.join()
+
 
   except Exception as strerror:
       print(color(strerror, F.BLUE))
