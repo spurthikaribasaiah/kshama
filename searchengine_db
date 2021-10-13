@@ -31,7 +31,7 @@ class drivesearch:
                 print("execute_sql() ERROR:", err)
 
     def write_recs_to_db(self, filename, dirname, searchres):
-        sql_statement = """INSERT INTO some_table (filename, dirname, searchresult) VALUES({},{},{});""".format(filename,dirname,str(searchres))
+        sql_statement = """INSERT INTO search_results (filename, dirname, searchresult) VALUES({},{},{});""".format(str(filename),str(dirname),str(searchres))
         self.execute_sql(sql_statement)
 
 
