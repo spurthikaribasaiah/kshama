@@ -49,3 +49,9 @@ print ("CREATE TABLE sql_statement is:\n", sql_statement)
 
 # call the function to create table
 execute_sql(sql_statement)
+
+conn.commit()
+print("committed the changes")
+#Closing the connection
+conn.close()
+print("connection closed")
