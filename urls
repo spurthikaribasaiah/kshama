@@ -1,5 +1,5 @@
 https://www.codegrepper.com/code-examples/python/python+code+to+connect+pgadmin+4+localhost
-
+https://kb.objectrocket.com/postgresql/create-a-postgresql-table-and-insert-data-using-the-psycopg2-adapter-for-python-748
 
 from psycopg2 import connect, sql
 
