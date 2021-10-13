@@ -14,15 +14,14 @@ class drivesearch:
        available_drives = ['%s:' % d for d in string.ascii_uppercase if os.path.exists('%s:' % d)]
        return available_drives
 
-    def search_file_in_drives(self, filename, i, directorylist = None):
+    def search_file_in_drives(self, filename, dirname):
         filelist = []
         # search for the file in the directories
-        for dirname in i:
-            dirname = dirname.upper() if ':' in dirname else dirname.upper() + ':'
-            for dirpath, dirs, files in os.walk(dirname):
-                for file in files:
-                    if filename in file:
-                        filelist.append(os.path.join(dirpath, file))
+        dirname = dirname.upper() if ':' in dirname else dirname.upper() + ':'
+        for dirpath, dirs, files in os.walk(dirname):
+            for file in files:
+                if filename in os.path.join(dirpath, file):
+                    filelist.append(os.path.join(dirpath, file))
 
         if not filelist:
            print(color("There are no files present with the name '" + filename + "' in the directory " + dirname, F.RED))
@@ -65,8 +64,8 @@ if __name__ == "__main__":
 
     # Creating threads to run in multithread
       threads = []
-      for i in dirlist:
-          t = threading.Thread(target=drv_srch.search_file_in_drives, args=[file_name,i, directory_name])
+      for dirname in dirlist:
+          t = threading.Thread(target=drv_srch.search_file_in_drives, args=[file_name,dirname])
           t.start()
           threads.append(t)
       print(f'Active Threads: {threading.active_count()}')
