@@ -1,36 +1,25 @@
 https://www.codegrepper.com/code-examples/python/python+code+to+connect+pgadmin+4+localhost
 
 
+from psycopg2 import connect, sql
 
 # define a function that will execute SQL statements
-def execute_sql(ident=None, statement):
-
-print ("\nexecute_sql() SQL statement:", statement)
-
+def execute_sql(statement):
 # check if SQL statement/query end with a semi-colon
-if statement[-1] != ";":
-err = "execute_sql() ERROR: All SQL statements and "
-err = err + "queries must end with a semi-colon."
-print (err)
-else:
-try:
-# have sql.SQL() return a sql.SQL object
-sql_object = sql.SQL(
-# pass SQL string to sql.SQL()
-statement
-).format(
-# pass the identifier to the Identifier() method
-sql.Identifier( ident )
-)
+    if statement[-1] != ";":
+       err = "execute_sql() ERROR: All SQL statements and "
+       err = err + "queries must end with a semi-colon."
+       print (err)
+    else:
+      try:
+         # pass the psycopg2.sql.SQL object to execute() method
+         cursor.execute(statement)
 
-# pass the psycopg2.sql.SQL object to execute() method
-cursor.execute( sql_object )
+         # print message if no exceptions were raised
+         print ("execute_sql() FINISHED")
 
-# print message if no exceptions were raised
-print ("execute_sql() FINISHED")
-
-except Exception as err:
-print ("execute_sql() ERROR:", err)
+      except Exception as err:
+         print ("execute_sql() ERROR:", err)
 
 # declare a string for the table name
 TABLE_NAME = "search_results"
@@ -44,8 +33,19 @@ searchresult VARCHAR(max)
 );""".format( TABLE_NAME )
 
 
+# instantiate a cursor object from the connection
+# declare a new PostgreSQL connection object
+conn = connect(
+dbname = "postgres",
+user = "postgres",
+host = "127.0.0.1",
+port = "5432",
+password = "admin"
+)
+cursor = conn.cursor()
+
 # print the psycopg2.sql.SQL object
-print ("CREATE TABLE sql_statement:\n", sql_statement)
+print ("CREATE TABLE sql_statement is:\n", sql_statement)
 
 # call the function to create table
-execute_sql(TABLE_NAME, sql_statement)
+execute_sql(sql_statement)
