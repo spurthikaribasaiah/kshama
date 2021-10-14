@@ -37,23 +37,16 @@ class drivesearch:
 
         return data
 
-    def write_recs_to_db(self, filename, searchres):
-        sql_statement = """INSERT INTO search_results (filename, searchresult) VALUES('{}','{}');""".format(str(filename),str(searchres))
-        self.execute_sql(sql_statement, "write_recs_to_db")
-
-    def select_recs_from_db(self, filename):
-        sql_statement = """SELECT searchresult FROM search_results WHERE filename = '{}';""".format(str(filename))
-        retreived_data = self.execute_sql(sql_statement, "select_recs_from_db")
-        return retreived_data
-
     def search_file_in_drives(self, filename):
       # Search in the history SQL table if there is an entry for the filename
-        table_data = self.select_recs_from_db(filename)
+        sql_statement = """SELECT 1 as dummy FROM search_results WHERE filename = '{}';""".format(str(filename))
+        history_available = self.execute_sql(sql_statement, "check_history")
+        
       # If there is no entry in the table then search in all the directories else show the result from the table
-        if not table_data or table_data is None or table_data == '':
+        if not history_available or history_available is None or history_available == '':
            filelist = []
            dirlist = self.list_available_drives()
-
+           
          # search for the file in the directories
            for dirname in dirlist:
                dirname = dirname.upper() if ':' in dirname else dirname.upper() + ':'
@@ -64,10 +57,15 @@ class drivesearch:
 
          # write the results to the db
            filelist_str = ' || '.join(filelist)
+           sql_statement = """INSERT INTO search_results (filename, searchresult) VALUES('{}','{}');""".format(str(filename),str(filelist_str))
+           self.execute_sql(sql_statement, "write_recs_to_db")
            self.write_recs_to_db(filename, filelist_str)
         else:
+          # Retreive the search result from the table
+            sql_statement = """SELECT searchresult FROM search_results WHERE filename = '{}';""".format(str(filename))
+            table_data = self.execute_sql(sql_statement, "select_recs_from_db")
             for line in table_data:
-                filelist = line.split(' || ')
+                filelist = line
 
         if not filelist:
            logger.info("There are no files present with the name '" + filename + "' in all the directories ")
