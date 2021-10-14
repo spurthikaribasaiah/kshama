@@ -50,7 +50,7 @@ class drivesearch:
       # Search in the history SQL table if there is an entry for the filename
         table_data = self.select_recs_from_db(filename)
       # If there is no entry in the table then search in all the directories else show the result from the table
-        if table_data is None or table_data == '':
+        if not table_data or table_data is None or table_data == '':
            filelist = []
            dirlist = self.list_available_drives().split(',')
 
