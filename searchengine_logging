@@ -52,7 +52,7 @@ class drivesearch:
       # If there is no entry in the table then search in all the directories else show the result from the table
         if not table_data or table_data is None or table_data == '':
            filelist = []
-           dirlist = self.list_available_drives().split(',')
+           dirlist = self.list_available_drives()
 
          # search for the file in the directories
            for dirname in dirlist:
