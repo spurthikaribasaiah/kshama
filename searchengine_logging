@@ -59,7 +59,6 @@ class drivesearch:
            filelist_str = ' || '.join(filelist)
            sql_statement = """INSERT INTO search_results (filename, searchresult) VALUES('{}','{}');""".format(str(filename),str(filelist_str))
            self.execute_sql(sql_statement, "write_recs_to_db")
-           self.write_recs_to_db(filename, filelist_str)
         else:
           # Retreive the search result from the table
             sql_statement = """SELECT searchresult FROM search_results WHERE filename = '{}';""".format(str(filename))
