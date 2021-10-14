@@ -66,7 +66,7 @@ class drivesearch:
             for line in table_data:
                 filelist = line
 
-        if not filelist:
+        if not filelist or ':' not in filelist:
            logger.info("There are no files present with the name '" + filename + "' in all the directories ")
         else:
            logger.info("Please find below the list of search results for the file '" + file_name + "' in all the directories:")
