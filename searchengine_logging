@@ -96,7 +96,7 @@ if __name__ == "__main__":
           raise Exception("File Name to search is not provided in 3 attempts. Hence aborting the process")
 
     # Creating the list of files from the input
-       filelist = file_names.replace(' ','').split(',')
+       file_list = file_names.replace(' ','').split(',')
        logger.info("Search engine will be searching the files mentioned in parallel: " + str(filelist))
     # declare a new PostgreSQL connection object and instantiate a cursor object from the connection
        conn = connect(dbname = "postgres",user = "postgres",host = "127.0.0.1",port = "5432",password = "admin")
@@ -104,7 +104,7 @@ if __name__ == "__main__":
 
     # Creating threads to run in multithread
        threads = []
-       for file_name in filelist:
+       for file_name in file_list:
            t = threading.Thread(target=drv_srch.search_file_in_drives, args=[file_name])
            t.start()
            threads.append(t)
