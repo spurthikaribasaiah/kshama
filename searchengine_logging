@@ -1,0 +1,131 @@
+import os, string
+import threading
+from psycopg2 import connect, sql
+import logging
+
+# Gets or creates a logger
+logger = logging.getLogger(__name__)
+# set log level
+logger.setLevel(logging.DEBUG)
+# define file handler and set formatter
+file_handler = logging.FileHandler('logfile.log')
+formatter    = logging.Formatter('%(asctime)s : %(levelname)s : %(name)s : %(message)s')
+file_handler.setFormatter(formatter)
+# add file handler to logger
+logger.addHandler(file_handler)
+
+class drivesearch:
+    def list_available_drives(self):
+       available_drives = ['%s:' % d for d in string.ascii_uppercase if os.path.exists('%s:' % d)]
+       return available_drives
+
+    def execute_sql(self, statement, name):
+    # check if SQL statement/query end with a semi-colon
+        if statement[-1] != ";":
+            statement  = statement + ";"
+        try:
+    # pass the psycopg2.sql.SQL object to execute() method
+           cursor.execute(statement)
+           if "select" in name:
+               data = cursor.fetchall()
+           else:
+               data = 'NA'
+    # print message if no exceptions were raised
+           logger.info(f'execute_sql(): {name} FINISHED')
+        except Exception as err:
+           logger.exception(f'execute_sql(): {name} ERROR', err)
+
+        return data
+
+    def write_recs_to_db(self, filename, searchres):
+        sql_statement = """INSERT INTO search_results (filename, searchresult) VALUES('{}','{}');""".format(str(filename),str(searchres))
+        self.execute_sql(sql_statement, "write_recs_to_db")
+
+    def select_recs_from_db(self, filename):
+        sql_statement = """SELECT searchresult FROM search_results WHERE filename = '{}';""".format(str(filename))
+        retreived_data = self.execute_sql(sql_statement, "select_recs_from_db")
+        return retreived_data
+
+    def search_file_in_drives(self, filename):
+      # Search in the history SQL table if there is an entry for the filename
+        table_data = self.select_recs_from_db(filename)
+      # If there is no entry in the table then search in all the directories else show the result from the table
+        if table_data is None or table_data == '':
+           filelist = []
+           dirlist = self.list_available_drives().split(',')
+
+         # search for the file in the directories
+           for dirname in dirlist:
+               dirname = dirname.upper() if ':' in dirname else dirname.upper() + ':'
+               for dirpath, dirs, files in os.walk(dirname):
+                   for file in files:
+                       if filename in os.path.join(dirpath, file):
+                          filelist.append(os.path.join(dirpath, file))
+
+         # write the results to the db
+           filelist_str = ' || '.join(filelist)
+           self.write_recs_to_db(filename, filelist_str)
+        else:
+            for line in table_data:
+                filelist = line.split(' || ')
+
+        if not filelist:
+           logger.info("There are no files present with the name '" + filename + "' in all the directories ")
+        else:
+           logger.info("Please find below the list of search results for the file '" + file_name + "' in all the directories:")
+           logger.info(filelist)
+
+        return filelist
+
+if __name__ == "__main__":
+   try:
+       logger.info("Welcome to the file search engine")
+    # Initialisation of the class
+       drv_srch = drivesearch()
+
+    # calling the function to list the available drives on the computer
+       avail_drivs = drv_srch.list_available_drives()
+       logger.info("Please find the list of available directories: " + str(avail_drivs))
+
+    # Taking the user input to select the directory to search for the file and the specific file name to search
+       cnt = 1
+       file_names = ''
+       while cnt < 4 and (file_names is None or file_names == ''):
+          print(str(cnt) + " try")
+          print("File Name is mandatory to put. Please input the file name to search for : ")
+          file_names = input()
+          cnt = cnt + 1
+       if file_names is None or file_names == '':
+          raise Exception("File Name to search is not provided in 3 attempts. Hence aborting the process")
+
+    # Creating the list of files from the input
+       filelist = file_names.split(',')
+
+    # declare a new PostgreSQL connection object and instantiate a cursor object from the connection
+       conn = connect(dbname = "postgres",user = "postgres",host = "127.0.0.1",port = "5432",password = "admin")
+       cursor = conn.cursor()
+
+    # Creating threads to run in multithread
+       threads = []
+       for file_name in filelist:
+           t = threading.Thread(target=drv_srch.search_file_in_drives, args=[file_name])
+           t.start()
+           threads.append(t)
+       logger.info(f'Active Threads: {threading.active_count()}')
+       logger.info(threads)
+
+       for thread in threads:
+           thread.join()
+
+    # Committing the database transactions
+       conn.commit()
+       logger.info("committed the changes")
+    # close the cursor object to avoid memory leaks
+       cursor.close()
+    # Closing the connection
+       conn.close()
+       logger.info("connection closed")
+
+   except Exception as strerror:
+       logger.exception(strerror)
+       raise
