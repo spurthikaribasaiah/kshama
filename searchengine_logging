@@ -97,7 +97,7 @@ if __name__ == "__main__":
 
     # Creating the list of files from the input
        file_list = file_names.replace(' ','').split(',')
-       logger.info("Search engine will be searching the files mentioned in parallel: " + str(filelist))
+       logger.info("Search engine will be searching the files mentioned in parallel: " + str(file_list))
     # declare a new PostgreSQL connection object and instantiate a cursor object from the connection
        conn = connect(dbname = "postgres",user = "postgres",host = "127.0.0.1",port = "5432",password = "admin")
        cursor = conn.cursor()
