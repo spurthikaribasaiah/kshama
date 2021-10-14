@@ -40,7 +40,7 @@ class drivesearch:
     def search_file_in_drives(self, filename):
       # Search in the history SQL table if there is an entry for the filename
         sql_statement = """SELECT 1 as dummy FROM search_results WHERE filename = '{}';""".format(str(filename))
-        history_available = self.execute_sql(sql_statement, "check_history")
+        history_available = self.execute_sql(sql_statement, "check_history_select")
         
       # If there is no entry in the table then search in all the directories else show the result from the table
         if not history_available or history_available is None or history_available == '':
