@@ -41,9 +41,8 @@ def search_file_in_drives(filename, dirlist, logger):
 
 if __name__ == '__main__':
     logger = sl.log_creation()
-    sql_statement = """SELECT 1 as dummy FROM search_results;"""
-    data = sd.execute_sql(sql_statement, "select_recs_from_db", logger)
-    for line in data:
-        filelist = line
+    filename = "kshama"
+    dirlist = ['E:']
+    filelist = search_file_in_drives(filename, dirlist, logger)
     print(filelist)
     logger.info("search directory is working")
