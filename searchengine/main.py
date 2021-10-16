@@ -24,7 +24,11 @@ if __name__ == '__main__':
               cnt = cnt + 1
         if file_names is None or file_names == '':
               raise Exception("File Name to search is not provided in 3 attempts. Hence aborting the process")
-
+    
+# Take the user input to search in the specific directory
+        print("Please input the directory name to search for the file : ")
+        dir_names = input()
+        
 # Creating the list of files from the input
         file_list = file_names.split(',')
         logger.info("Search engine will be searching the files mentioned in parallel: " + str(file_list))
