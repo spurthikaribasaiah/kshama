@@ -28,11 +28,18 @@ if __name__ == '__main__':
 # Creating the list of files from the input
         file_list = file_names.split(',')
         logger.info("Search engine will be searching the files mentioned in parallel: " + str(file_list))
+        
+# Creating the list of directories from the input
+        if dir_names is not None or dir_names != '':
+           dir_list = dir_names.split(',')
+        else:
+           dir_list = avail_drivs
+        logger.info("Search engine will be searching the files mentioned in parallel in the mentioned directories: " + str(dir_list))
 
 # Creating threads to run in multithread and call search_file_in_drives function from searchdirectories script to search in the history and then search in the drives
         threads = []
         for file_name in file_list:
-            t = threading.Thread(target=sd.search_file_in_drives, args=[file_name, avail_drivs, logger])
+            t = threading.Thread(target=sd.search_file_in_drives, args=[file_name, dir_list, logger])
             t.start()
             threads.append(t)
             logger.info(f'Active Threads: {threading.active_count()}')
