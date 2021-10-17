@@ -1,10 +1,11 @@
 from psycopg2 import connect, sql, Error
 import searchlogging as sl
 
-def execute_sql(statement, name, logger):
+class search_database:
+  def execute_sql(statement, name, logger):
     try:
         # declare a new PostgreSQL connection object and instantiate a cursor object from the connection
-        conn = connect(dbname="postgres", user="postgres", host="localhost", port="5433", password="admin")
+        conn = connect(dbname="postgres", user="postgres", host="127.0.0.1", port="5432", password="admin")
         cursor = conn.cursor()
         # check if SQL statement/query end with a semi-colon
         if statement[-1] != ";":
@@ -36,6 +37,6 @@ def execute_sql(statement, name, logger):
 if __name__ == '__main__':
     statement = "SELECT 1 as dummy"
     name = "select 1 as dummy"
-    logger = sl.log_creation()
-    data = execute_sql(statement, name)
-    print(data)
+    logger = sl.search_logging.log_creation()
+    data = search_database.execute_sql(statement, name, logger)
+    print(data) 
