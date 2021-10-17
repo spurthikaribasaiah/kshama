@@ -1,6 +1,7 @@
 import logging
 
-def log_creation():
+class search_logging:
+  def log_creation():
     # Gets or creates a logger
     logger = logging.getLogger(__name__)
     # set log level
@@ -15,5 +16,5 @@ def log_creation():
 
 if __name__ == '__main__':
 # Call the log_creation function from the searchlogging script for logging purpose
-    logger = log_creation()
+    logger = search_logging.log_creation()
     logger.info("Logging is enabled")
