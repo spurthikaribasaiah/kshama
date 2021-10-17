@@ -2,10 +2,13 @@ import os, string
 import searchdatabase as sd
 import searchlogging as sl
 
-def search_file_in_drives(filename, dirlist, logger):
+class search_drives:
+  def search_file_in_drives(filename, dirlist, logger):
+    # Initialisation of class
+    sda = sd.search_database
     # Search in the history SQL table if there is an entry for the filename
     sql_statement = """SELECT 1 as dummy FROM search_results WHERE filename = '{}';""".format(str(filename))
-    history_available = sd.execute_sql(sql_statement, "check_history_select", logger)
+    history_available = sda.execute_sql(sql_statement, "check_history_select", logger)
 
     # If there is no entry in the table then search in all the directories else show the result from the table
     if not history_available or history_available is None or history_available == '':
@@ -22,11 +25,11 @@ def search_file_in_drives(filename, dirlist, logger):
         filelist_str = ' || '.join(filelist)
         sql_statement = """INSERT INTO search_results (filename, searchresult, transaction_dt) VALUES('{}','{}', current_date);""".format(
             str(filename), str(filelist_str))
-        sd.execute_sql(sql_statement, "write_recs_to_db", logger)
+        sda.execute_sql(sql_statement, "write_recs_to_db", logger)
     else:
         # Retreive the search result from the table
         sql_statement = """SELECT searchresult FROM search_results WHERE filename = '{}';""".format(str(filename))
-        table_data = sd.execute_sql(sql_statement, "select_recs_from_db", logger)
+        table_data = sda.execute_sql(sql_statement, "select_recs_from_db", logger)
         for line in table_data:
             filelist = line
 
@@ -40,9 +43,10 @@ def search_file_in_drives(filename, dirlist, logger):
     return filelist
 
 if __name__ == '__main__':
-    logger = sl.log_creation()
+    logger = sl.search_logging.log_creation()
     filename = "kshama"
     dirlist = ['E:']
-    filelist = search_file_in_drives(filename, dirlist, logger)
+    filelist = search_drives.search_file_in_drives(filename, dirlist, logger)
     print(filelist)
     logger.info("search directory is working")
+
