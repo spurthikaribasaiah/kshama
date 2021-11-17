@@ -1,4 +1,4 @@
-import scratch_2 as fd
+import skillregistryfunctions as fd
 
 loop = 'true'
 while (loop == 'true'):
