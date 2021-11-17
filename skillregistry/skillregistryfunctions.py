@@ -1,8 +1,11 @@
 skillRegister = {
     "John" : {"HTML5","CSS","JavaScript","JQuery","Angular","React"},
     "Smith" : {"Azure Devops","Adobe XD","Java","C#"},
-    "Spurthi" : {"Azure Devops","Adobe XD","Java","C#"},
-    "Spurthi2" : {"Azure Devops","Adobe XD","Java","C#",'Python'}
+    "Boult" : {"Mongo DB","Fresh Chat","Android","Python","Whimsical"},
+    "Will" : {"Swagger","CMS","Visual Studio","TFS","PostMan"},
+    "Ethan" : {"Burp","CSS","Adobe XD","Java","Python","PostMan"},
+    "Mike" : {"JavaScript","jQuery","React"},
+    "Daniel" : {"HTML5","CSS","JavaScript","jQuery","Angular","React","Azure Devops","Adobe XD","Java","C#"}
 }
 
 def searchSkills(names):
