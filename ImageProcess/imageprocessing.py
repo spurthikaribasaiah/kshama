@@ -43,7 +43,7 @@ while (loop == 'true'):
     while True:
         choice = input("Enter your choice: ")
         if choice == '1':
-            f = ndimage.convolve(np.array(ip), boxBlurKernel)
+            f = ndimage.convolve(ip, boxBlurKernel)
             print('Box Blur matrix: ')
             print(f)
             plt.subplot(121), plt.imshow(ip), plt.title('Original image')
