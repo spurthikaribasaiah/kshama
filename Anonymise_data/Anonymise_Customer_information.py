@@ -7,7 +7,7 @@ from anonympy.pandas import dfAnonymizer
 def generate_data():
     fake = Faker()
     data = []
-    for val in range(2):
+    for val in range(100):
         data.append([fake.first_name(),fake.last_name(),fake.address().replace('\n',' '),fake.date_of_birth()])
     return data
 
